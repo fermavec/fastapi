@@ -5,6 +5,7 @@ from pydantic import BaseModel
 #Fast API
 from fastapi import FastAPI
 from fastapi import Body 
+from fastapi import Query
 
 
 #Creando variable de ejecucion con instancia de la clase FastAPI
@@ -32,3 +33,11 @@ def home():
 @app.post("/person/new")
 def create_person(person: Person = Body(...)):#Request Body, los ... significan parametro obligartorio
     return person
+
+
+#Validations: Query Parameters
+@app.get("/person/detail")
+def show_person(
+    name: Optional[str] = Query(None, min_length=1, max_length=50),
+    age: str = Query(...)):
+    return {name: age}
