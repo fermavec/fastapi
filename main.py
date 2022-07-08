@@ -8,3 +8,9 @@ app = FastAPI()
 def home():
     #Retorna un Json
     return {"Fernando": "Mavec"}
+
+
+#Request and Response Body
+@app.post("/person/new")
+def create_person():
+    pass
