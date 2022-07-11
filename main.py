@@ -1,8 +1,9 @@
 #Python
-from email.utils import decode_rfc2231
 from typing import Optional
+from enum import Enum
 #Pydantic!
 from pydantic import BaseModel
+from pydantic import Field
 #Fast API
 from fastapi import FastAPI
 from fastapi import Body 
@@ -14,13 +15,34 @@ app = FastAPI()
 
 
 #Models (Heredan de Base Model)
+class HairColor(Enum):
+    white = "White"
+    black = "Black"
+    brown = "Brown"
+    blonde = "Blonde"
+    red = "Red"
+
+
 class Person(BaseModel):
     #Con tipado estatico
-    first_name: str
-    last_name: str
-    age: int
-    hair_color: Optional[str] = None
-    is_married: Optional[bool] = None
+    #Con Field de pydantic haremos el validation model
+    first_name: str = Field(
+        ...,
+        min_length= 1,
+        max_length= 50
+    )
+    last_name: str = Field(
+        ...,
+        min_length= 1,
+        max_length= 50
+    )
+    age: int = Field(
+        ...,
+        gt= 0,
+        le= 115
+    )
+    hair_color: Optional[HairColor] = Field(default=None)
+    is_married: Optional[bool] = Field(default=None)
 
 
 class Location(BaseModel):
