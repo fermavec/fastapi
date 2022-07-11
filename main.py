@@ -5,7 +5,7 @@ from pydantic import BaseModel
 #Fast API
 from fastapi import FastAPI
 from fastapi import Body 
-from fastapi import Query
+from fastapi import Query, Path
 
 
 #Creando variable de ejecucion con instancia de la clase FastAPI
@@ -38,6 +38,30 @@ def create_person(person: Person = Body(...)):#Request Body, los ... significan 
 #Validations: Query Parameters
 @app.get("/person/detail")
 def show_person(
-    name: Optional[str] = Query(None, min_length=1, max_length=50),
-    age: str = Query(...)):
+    name: Optional[str] = Query(
+        None, 
+        min_length=1, 
+        max_length=50,
+        title= "Person Name",
+        description="This is the person name. It's between 1 to 50 characters"
+        ),
+    age: str = Query(
+        ...,
+        title= "Person Age",
+        description= "This is the person age. It's required"
+        )
+):
     return {name: age}
+
+
+#Validaciones: Path Parameters
+@app.get("/person/details/{person_id}")
+def show_person(
+    person_id: int = Path(
+        ..., 
+        gt=0,
+        title= "Person ID",
+        description= "This is the person id. It's required"
+        )
+):
+    return {person_id: "it exists!"}
