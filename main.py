@@ -49,22 +49,38 @@ class Person(BaseModel):
     hair_color: Optional[HairColor] = Field(default=None)
     is_married: Optional[bool] = Field(default=None)
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "first_name": "Fernando",
+                "last_name": "Mavec",
+                "age": 35,
+                "email": "fer@fermavec.com",
+                "webpage": "http://www.fermavec.com",
+                "hair_color": "Black",
+                "is_married": False
+            }
+        }
+
 
 class Location(BaseModel):
     country: str = Field(
         ...,
         min_length=2,
-        max_length=50
+        max_length=50,
+        example = "MX"
     )
     city: str = Field(
         ...,
         min_length=2,
-        max_length=50
+        max_length=50,
+        example = "CDMX"
     )
-    zip_code: int = Field(
+    zip_code: str = Field(
         ...,
-        ge=4,
-        le=5 
+        min_length=4,
+        max_length=5,
+        example= "01020"
     )
 
 
