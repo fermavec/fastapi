@@ -1,9 +1,12 @@
 #Python
+from concurrent.futures.process import _MAX_WINDOWS_WORKERS
 from typing import Optional
 from enum import Enum
 #Pydantic!
 from pydantic import BaseModel
 from pydantic import Field
+from pydantic import EmailStr
+from pydantic import HttpUrl
 #Fast API
 from fastapi import FastAPI
 from fastapi import Body 
@@ -41,14 +44,28 @@ class Person(BaseModel):
         gt= 0,
         le= 115
     )
+    email: EmailStr = Field(...)
+    webpage: HttpUrl = Field(...)
     hair_color: Optional[HairColor] = Field(default=None)
     is_married: Optional[bool] = Field(default=None)
 
 
 class Location(BaseModel):
-    country: str
-    city: str
-    zip_code: int
+    country: str = Field(
+        ...,
+        min_length=2,
+        max_length=50
+    )
+    city: str = Field(
+        ...,
+        min_length=2,
+        max_length=50
+    )
+    zip_code: int = Field(
+        ...,
+        ge=4,
+        le=5 
+    )
 
 
 #Path operation decorator para ejecución en el home ("/"")
