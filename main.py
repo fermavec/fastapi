@@ -1,4 +1,5 @@
 #Python
+from email.utils import decode_rfc2231
 from typing import Optional
 #Pydantic!
 from pydantic import BaseModel
@@ -20,6 +21,12 @@ class Person(BaseModel):
     age: int
     hair_color: Optional[str] = None
     is_married: Optional[bool] = None
+
+
+class Location(BaseModel):
+    country: str
+    city: str
+    zip_code: int
 
 
 #Path operation decorator para ejecución en el home ("/"")
@@ -65,3 +72,24 @@ def show_person(
         )
 ):
     return {person_id: "it exists!"}
+
+
+#Validaciones: Request Body
+@app.put("/person/{person_id}")
+def update_person(
+    person_id: int = Path(
+        ...,
+        title= "Person ID",
+        description= "This is the Person ID. It's Required",
+        gt= 0
+    ),
+    person: Person = Body(
+        ...
+    ),
+    location: Location = Body(
+        ...
+    )
+):
+    results = person.dict()
+    results.update(location.dict())
+    return results
