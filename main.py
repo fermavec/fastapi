@@ -1,5 +1,6 @@
 #Python
 from concurrent.futures.process import _MAX_WINDOWS_WORKERS
+from os import stat
 from typing import Optional
 from enum import Enum
 #Pydantic!
@@ -9,6 +10,7 @@ from pydantic import EmailStr
 from pydantic import HttpUrl
 #Fast API
 from fastapi import FastAPI
+from fastapi import status
 from fastapi import Body 
 from fastapi import Query, Path
 
@@ -63,7 +65,6 @@ class PersonBase(BaseModel):
         }
 
 
-
 class Person(PersonBase):
     password: str = Field(
         ..., 
@@ -97,20 +98,30 @@ class Location(BaseModel):
 
 
 #Path operation decorator para ejecución en el home ("/"")
-@app.get("/")
+@app.get(
+    path="/", 
+    status_code=status.HTTP_200_OK
+    )
 def home():
     #Retorna un Json
     return {"Fernando": "Mavec"}
 
 
 #Request and Response Body
-@app.post("/person/new", response_model=PersonOut)
+@app.post(
+    path="/person/new", 
+    response_model=PersonOut,
+    status_code=status.HTTP_201_CREATED
+    )
 def create_person(person: Person = Body(...)):#Request Body, los ... significan parametro obligartorio
     return person
 
 
 #Validations: Query Parameters
-@app.get("/person/detail")
+@app.get(
+    path="/person/detail",
+    status_code=status.HTTP_200_OK
+    )
 def show_person(
     name: Optional[str] = Query(
         None, 
@@ -131,7 +142,10 @@ def show_person(
 
 
 #Validaciones: Path Parameters
-@app.get("/person/details/{person_id}")
+@app.get(
+    path="/person/details/{person_id}",
+    status_code=status.HTTP_200_OK
+    )
 def show_person(
     person_id: int = Path(
         ..., 
@@ -145,7 +159,10 @@ def show_person(
 
 
 #Validaciones: Request Body
-@app.put("/person/{person_id}")
+@app.put(
+    path="/person/{person_id}",
+    status_code=status.HTTP_200_OK
+    )
 def update_person(
     person_id: int = Path(
         ...,
