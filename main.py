@@ -1,5 +1,7 @@
 #Python
 from concurrent.futures.process import _MAX_WINDOWS_WORKERS
+from email import message
+from importlib.resources import path
 from os import stat
 from typing import Optional
 from enum import Enum
@@ -12,7 +14,7 @@ from pydantic import HttpUrl
 from fastapi import FastAPI
 from fastapi import status
 from fastapi import Body 
-from fastapi import Query, Path
+from fastapi import Query, Path, Form
 
 
 #Creando variable de ejecucion con instancia de la clase FastAPI
@@ -95,6 +97,15 @@ class Location(BaseModel):
         max_length=5,
         example= "01020"
     )
+
+
+class LoginOut(BaseModel):
+    username: str= Field(
+        ...,
+        max_Length=20,
+        example="fermavec"
+    )
+    message: str = Field(default="Login Succesfully!")
 
 
 #Path operation decorator para ejecución en el home ("/"")
@@ -182,3 +193,15 @@ def update_person(
     results.update(location.dict())
     return results
 
+
+#Working with forms
+@app.post(
+    path="/login",
+    response_model=LoginOut,
+    status_code=status.HTTP_200_OK
+    )
+def login(
+    username: str= Form(...), 
+    password: str= Form(...) 
+    ):
+    return LoginOut(username=username)
