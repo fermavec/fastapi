@@ -1,6 +1,7 @@
 #Python
 from concurrent.futures.process import _MAX_WINDOWS_WORKERS
 from email import message
+from email.policy import default
 from importlib.resources import path
 from os import stat
 from typing import Optional
@@ -14,7 +15,7 @@ from pydantic import HttpUrl
 from fastapi import FastAPI
 from fastapi import status
 from fastapi import Body 
-from fastapi import Query, Path, Form
+from fastapi import Query, Path, Form, Header, Cookie
 
 
 #Creando variable de ejecucion con instancia de la clase FastAPI
@@ -205,3 +206,31 @@ def login(
     password: str= Form(...) 
     ):
     return LoginOut(username=username)
+
+
+#Coockies and Headers Parameters
+@app.post(
+    path= '/contact',
+    status_code=status.HTTP_200_OK
+    )
+def contact(
+    first_name: str= Form(
+        ...,
+        max_Length=20,
+        min_Length=1
+        ),
+    last_name: str= Form(
+        ...,
+        max_Length=20,
+        min_Length=1
+        ),
+    email: EmailStr= Form(...),
+    message: str= Form(
+        ...,
+        min_Length=20
+        ),
+    #header
+    user_agent: Optional[str] = Header(default=None),
+    ads: Optional[str] = Cookie(default=None)
+    ):
+    return user_agent
