@@ -48,7 +48,47 @@ class Person(BaseModel):
     webpage: HttpUrl = Field(...)
     hair_color: Optional[HairColor] = Field(default=None)
     is_married: Optional[bool] = Field(default=None)
+    password: str = Field(
+        ..., 
+        min_length=8
+        )
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "first_name": "Fernando",
+                "last_name": "Mavec",
+                "age": 35,
+                "email": "fer@fermavec.com",
+                "webpage": "http://www.fermavec.com",
+                "hair_color": "Black",
+                "is_married": False,
+                "password": "holasoyfer"
+            }
+        }
+
+
+class PersonOut(BaseModel):
+    first_name: str = Field(
+        ...,
+        min_length= 1,
+        max_length= 50
+    )
+    last_name: str = Field(
+        ...,
+        min_length= 1,
+        max_length= 50
+    )
+    age: int = Field(
+        ...,
+        gt= 0,
+        le= 115
+    )
+    email: EmailStr = Field(...)
+    webpage: HttpUrl = Field(...)
+    hair_color: Optional[HairColor] = Field(default=None)
+    is_married: Optional[bool] = Field(default=None)
+    
     class Config:
         schema_extra = {
             "example": {
@@ -92,7 +132,7 @@ def home():
 
 
 #Request and Response Body
-@app.post("/person/new")
+@app.post("/person/new", response_model=PersonOut)
 def create_person(person: Person = Body(...)):#Request Body, los ... significan parametro obligartorio
     return person
 
@@ -152,3 +192,4 @@ def update_person(
     results = person.dict()
     results.update(location.dict())
     return results
+
