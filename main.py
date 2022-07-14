@@ -15,7 +15,7 @@ from pydantic import HttpUrl
 from fastapi import FastAPI
 from fastapi import status
 from fastapi import Body 
-from fastapi import Query, Path, Form, Header, Cookie
+from fastapi import Query, Path, Form, Header, Cookie, UploadFile, File
 
 
 #Creando variable de ejecucion con instancia de la clase FastAPI
@@ -231,6 +231,21 @@ def contact(
         ),
     #header
     user_agent: Optional[str] = Header(default=None),
+    #Cookie
     ads: Optional[str] = Cookie(default=None)
     ):
     return user_agent
+
+
+#Files
+@app.post(
+    path="/post-image"
+    )
+def post_image(
+    image: UploadFile = File()
+    ):
+    return {
+        "Filename": image.filename,
+        "Format": image.content_type,
+        "Size(kb)": round(len(image.file.read())/1024, ndigits=2)
+    }
