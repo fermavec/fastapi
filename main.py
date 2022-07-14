@@ -1,9 +1,4 @@
 #Python
-from concurrent.futures.process import _MAX_WINDOWS_WORKERS
-from email import message
-from email.policy import default
-from importlib.resources import path
-from os import stat
 from typing import Optional
 from enum import Enum
 #Pydantic!
@@ -14,6 +9,7 @@ from pydantic import HttpUrl
 #Fast API
 from fastapi import FastAPI
 from fastapi import status
+from fastapi import HTTPException 
 from fastapi import Body 
 from fastapi import Query, Path, Form, Header, Cookie, UploadFile, File
 
@@ -154,6 +150,9 @@ def show_person(
 
 
 #Validaciones: Path Parameters
+#HTTPException
+persons = [1, 2, 3, 4, 5]
+
 @app.get(
     path="/person/details/{person_id}",
     status_code=status.HTTP_200_OK
@@ -167,7 +166,13 @@ def show_person(
         example= 1
         )
 ):
-    return {person_id: "it exists!"}
+    if person_id not in persons:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="This person does not exist!"
+        )
+    else:
+        return {person_id: "it exists!"}
 
 
 #Validaciones: Request Body
