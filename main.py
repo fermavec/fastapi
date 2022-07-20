@@ -109,9 +109,20 @@ class LoginOut(BaseModel):
 @app.get(
     path="/", 
     status_code=status.HTTP_200_OK,
-    tags= ["Home"]
+    tags= ["Home"],
+    summary="Home"
     )
 def home():
+    """"
+    Home
+
+    This path operation returns a Json file that you can see at the homepage
+
+    Parameters:
+    - None
+
+    Returns a json file at home
+    """
     #Retorna un Json
     return {"Fernando": "Mavec"}
 
@@ -121,9 +132,21 @@ def home():
     path="/person/new", 
     response_model=PersonOut,
     status_code=status.HTTP_201_CREATED,
-    tags= ["Persons"]
+    tags= ["Persons"],
+    summary="Creates person in the app"
     )
 def create_person(person: Person = Body(...)):#Request Body, los ... significan parametro obligartorio
+    """
+    Create Person
+
+    This path operation creates and saves a new person in the database
+
+    Parameters:
+    - Request body parameter:
+        - **person: Person** -> a person model with first name, lastname, age, hair color and marital status
+
+    Returns a person model with first name, lastname, age, hair color and marital status
+    """
     return person
 
 
@@ -131,7 +154,8 @@ def create_person(person: Person = Body(...)):#Request Body, los ... significan 
 @app.get(
     path="/person/detail",
     status_code=status.HTTP_200_OK,
-    tags= ["Persons"]
+    tags= ["Persons"],
+    summary="Shows an especific person"
     )
 def show_person(
     name: Optional[str] = Query(
@@ -149,6 +173,16 @@ def show_person(
         example=35
         )
 ):
+    """
+    Show Person
+
+    This Path Operation allows you to see an specific person age from the database
+
+    Parameter:
+    - Query parameter:
+        - **name** -> string 1 to 50 characters optional
+        - **age** -> string requiered
+    """
     return {name: age}
 
 
@@ -159,7 +193,8 @@ persons = [1, 2, 3, 4, 5]
 @app.get(
     path="/person/details/{person_id}",
     status_code=status.HTTP_200_OK,
-    tags= ["Persons"]
+    tags= ["Persons"],
+    summary="Shows a person from an id"
     )
 def show_person(
     person_id: int = Path(
@@ -170,6 +205,15 @@ def show_person(
         example= 1
         )
 ):
+    """
+    Show person 
+
+    This path operation allows you to find a person in the database
+
+    Parameters:
+    -Path parameter:
+        - **person_id** -> int
+    """
     if person_id not in persons:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
